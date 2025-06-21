@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About Us - Lanjekar Mithai Bhandar</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="about.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">Lanjekar Mithai Bhandar</a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="products.html" class="nav-link">Products</a></li>
+        <li><a href="about.html" class="nav-link active">About</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="order.html" class="nav-link">order</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <section class="hero-section">
+      <div class="hero-image" aria-label="Delicious Indian sweets"></div>
+
+      <div class="hero-text">
+        <h1>Lanjekar Mithai Bhandar</h1>
+        <p><strong>Location:</strong> Vishrambag, Sangli</p>
+        <p><strong>Rating:</strong> ⭐ 4.2 (98 Reviews)</p>
+        <p>
+          Lanjekar Mithai Bhandar is a renowned bakery offering a delectable range of freshly baked goods and pastries. Situated in a prime location in Sangli, the bakery attracts food lovers from all over the area.
+        </p>
+      </div>
+    </section>
+
+    <section class="info-sections">
+      <article class="info-block fade-in">
+        <h2>Overview</h2>
+        <p>
+          Lanjekar Mithai Bhandar takes pride in offering a variety of high-quality baked goods, from bread and cakes to cookies and pastries.
+        </p>
+      </article>
+
+      <article class="info-block fade-in">
+        <h2>Amenities & Services</h2>
+        <ul>
+          <li>Custom orders for birthdays, weddings, anniversaries</li>
+          <li>Pre-order services for popular items</li>
+          <li>Delivery options for bulk orders and events</li>
+        </ul>
+      </article>
+
+      <article class="info-block fade-in">
+        <h2>Commitment to Quality</h2>
+        <p>
+          Every item is crafted with the finest ingredients, ensuring a fresh and flavorful experience every time. Our team maintains high standards to deliver exceptional products.
+        </p>
+      </article>
+
+      <article class="info-block fade-in">
+        <h2>Why Choose Us?</h2>
+        <ul>
+          <li>Strict hygiene & cleanliness standards</li>
+          <li>Friendly, knowledgeable staff dedicated to satisfaction</li>
+          <li>Traditional recipes blended with modern baking techniques</li>
+          <li>Decades of community trust & consistent quality</li>
+          <li>Eco-friendly packaging supporting sustainability</li>
+        </ul>
+      </article>
+
+      <article class="info-block fade-in">
+        <h2>Summary</h2>
+        <p>
+          With signature cakes, fresh breads, and delightful pastries, Lanjekar Mithai Bhandar has earned a loyal following that cherishes our quality and taste.
+        </p>
+      </article>
+
+      <!-- Owner section added below -->
+      <article class="info-block fade-in owner-section">
+  <h2>Owner</h2>
+  <p><strong>Rohit Lanjekar</strong></p>
+</article>
+
+<article class="info-block fade-in shop-time">
+  <h2>Shop Timing</h2>
+  <p><strong>Everyday:</strong> 8:30 AM to 8:30 PM</p>
+</article>
+    </section>
+  </main>
+
+  <script>
+    const faders = document.querySelectorAll(".fade-in");
+
+    const appearOptions = {
+      threshold: 0.3,
+      rootMargin: "0px 0px -50px 0px",
+    };
+
+    const appearOnScroll = new IntersectionObserver(function (entries, observer) {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("appear");
+        observer.unobserve(entry.target);
+      });
+    }, appearOptions);
+
+    faders.forEach((fader) => {
+      appearOnScroll.observe(fader);
+    });
+  </script>
+
+</body>
+</html>

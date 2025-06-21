@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap');
+@font-face {
+  font-family: 'AMSCalligraphy1';
+  src: url('../fonts/AMSCalligraphy1-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+:root {
+  --yellow: #FFC107;
+  --cream: #FFF8E1;
+  --brown: #6D4C41;
+  --white: #ffffff;
+}
+
+/* Reset and Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Baloo 2', sans-serif;
+}
+
+body {
+  background: var(--cream);
+  color: var(--brown);
+  line-height: 1.6;
+}
+
+/* Header */
+header {
+  background: var(--white);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  flex-wrap: wrap;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-img {
+  width: 120px;   /* Increased from 80px */
+  height: 120px;  /* Increased from 80px */
+  object-fit: contain;
+}
+
+
+.logo-text-group {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.logo-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--brown);
+}
+
+.tagline {
+  font-size: 1rem;
+  color: var(--yellow);
+  font-weight: 700;
+}
+
+nav a {
+  margin-left: 20px;
+  padding: 8px 0;
+  text-decoration: none;
+  color: var(--brown);
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+
+nav a:hover {
+  color: var(--yellow);
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--yellow);
+  color: var(--white);
+  animation: fadeIn 2s ease-in-out;
+}
+
+.hero h2 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.cta {
+  margin-top: 1.2rem;
+  padding: 0.8rem 2rem;
+  background: var(--white);
+  color: var(--brown);
+  border: none;
+  border-radius: 30px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.cta:hover {
+  background: var(--brown);
+  color: var(--white);
+  transform: scale(1.05);
+}
+
+/* Products Section */
+.products {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 3rem 2rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 15px;
+  padding: 1rem;
+  width: 250px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.card img:hover {
+  transform: scale(1.03);
+}
+
+/* Footer */
+footer {
+  background: var(--brown);
+  color: var(--cream);
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

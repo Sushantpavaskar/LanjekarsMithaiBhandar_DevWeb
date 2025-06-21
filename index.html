@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>लांजेकर मिठाई भंडार</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Baloo 2', sans-serif;
+      background-color: #fff8e1;
+    }
+
+    header {
+      background-color: #fff3cd;
+      padding: 1rem 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-img {
+      height: 60px;
+      margin-right: 1rem;
+    }
+
+    .logo-text {
+      font-size: 1.8rem;
+      margin: 0;
+      color: #6d4c41;
+    }
+
+    .tagline {
+      margin: 0;
+      font-size: 1rem;
+      color: #8d6e63;
+    }
+
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+      color: #5d4037;
+    }
+
+    .marathi-tagline {
+      font-size: 1.4rem;
+      font-weight: bold;
+      font-family: 'Tiro Devanagari Marathi', serif;
+      color: #5d4037;
+      text-align: center;
+      padding: 0.75rem 0;
+      background-color: #fff8e1;
+    }
+
+    .hero-section {
+      background-color: #ffc400;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 2rem 5% 0;
+      position: relative;
+      min-height: 420px;
+    }
+
+    .hero-text {
+      flex: 1;
+      color: white;
+      padding-bottom: 2rem;
+    }
+
+    .hero-text h2 {
+      font-size: 2.8rem;
+      font-weight: bold;
+    }
+
+    .hero-text p {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .cta {
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background-color: #fff;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .cta:hover {
+      background-color: #ffe082;
+    }
+
+    .hero-image {
+      flex: 1;
+      text-align: right;
+      position: relative;
+    }
+
+    .hero-image img {
+      max-height: 420px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      vertical-align: bottom;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+    }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
+      background: #fff8e1;
+    }
+
+    .card {
+      background: white;
+      padding: 1rem;
+      width: 220px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .card img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+
+    .card h3 {
+      margin-top: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    footer {
+      text-align: center;
+      background-color: #fff3cd;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #5d4037;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo-area">
+      <img src="img/Adobe Express - file.png" alt="Lanjekar Logo" class="logo-img" />
+      <div class="logo-text-group">
+        <h1 class="logo-text">लांजेकर मिठाई भंडार</h1>
+        <p class="tagline">ओळख सांगलीची...</p>
+      </div>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="products.html">Products</a>
+      <a href="contact.html">Contact</a>
+      <a href="cart.html">Cart</a>
+      <a href="order.html">Order</a>
+    </nav>
+  </header>
+
+  <!-- Tagline -->
+  <div class="marathi-tagline">
+    जशी पंढरपुरची विठाई, तशी लांजेकरांची मिठाई
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-text">
+      <h2>Sweetness in Every Bite!</h2>
+      <p>Traditional taste made with love.</p>
+      <a href="products.html"><button class="cta">Explore Products</button></a>
+    </div>
+    <div class="hero-image">
+      <img src="img/BrandAm.png" alt="Brand Ambassador" />
+    </div>
+  </section>
+
+  <!-- Product Highlights -->
+  <section class="products">
+    <div class="card">
+      <img src="img/pedha.jpg" alt="Pedha">
+      <h3>Delicious Pedha</h3>
+      <p>Soft and milky pedha made with premium khoya.</p>
+    </div>
+    <div class="card">
+      <img src="img/khava-barfi.jpg" alt="Barfi">
+      <h3>Classic Barfi</h3>
+      <p>Traditional barfi topped with silver vark.</p>
+    </div>
+    <div class="card">
+      <img src="img/kalakand.jpg" alt="Kalakand">
+      <h3>Fresh Kalakand</h3>
+      <p>Mouth-watering kalakand with cardamom flavor.</p>
+    </div>
+    <div class="card">
+      <img src="img/gulab-jamun.jpg" alt="Gulab Jamun">
+      <h3>Gulab Jamun</h3>
+      <p>Golden, juicy gulab jamun dipped in rose syrup.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    FSSAI Lic. 21518312000746 | © 2025 लांजेकर मिठाई भंडार
+  </footer>
+
+</body>
+</html>

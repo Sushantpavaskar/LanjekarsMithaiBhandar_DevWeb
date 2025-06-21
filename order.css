@@ -1,0 +1,74 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #FFF8E1;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar {
+  background-color: #FFC107;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #6D4C41;
+  text-decoration: none;
+}
+
+.nav-menu {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+}
+
+.nav-menu li a {
+  text-decoration: none;
+  color: #6D4C41;
+}
+
+.order-section {
+  padding: 30px;
+}
+
+.order-summary {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.order-form input,
+.order-form textarea,
+.order-form select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.order-form button {
+  background-color: #FFC107;
+  color: #6D4C41;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.marathi-font {
+  font-family: 'Tiro Devanagari Marathi', serif;
+  font-size: 24px;
+  margin-bottom: 10px;
+}

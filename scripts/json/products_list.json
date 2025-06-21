@@ -1,0 +1,52 @@
+[
+    {
+        "nameEnglish": "Bhadang",
+        "nameMarathi": "Spicy & Delicious",
+        "image": "img/b.jpg"
+    },
+    {
+        "nameEnglish": "Special Fried Poha Chivda",
+        "nameMarathi": "स्पेशल तळीव पोहे चिवडा",
+        "image": "img/SpChivda.jpg"
+    },
+    {
+        "nameEnglish": "Corn Chivda",
+        "nameMarathi": "मक्का चिवडा",
+        "image": "img/cornflakes chivda.jpg"
+    },
+    {
+        "nameEnglish": "Special Spicy Potato Chivda",
+        "nameMarathi": "स्पेशल तिखट बटाटा चिवडा",
+        "image": "img/SSPotatoChivda.jpg"
+    },
+    {
+        "nameEnglish": "Sweet Potato Chivda",
+        "nameMarathi": "गोड बटाटा चिवडा",
+        "image": "img/S Potato Chivda.jpg"
+    },
+    {
+        "nameEnglish": "Bhajani Chakli",
+        "nameMarathi": "भाजणी चकली",
+        "image": "img/chakli.jpg"
+    },
+    {
+        "nameEnglish": "Bakarwadi and all types of Namkeen",
+        "nameMarathi": "बाकरवडी",
+        "image": "img/bakarwadi.jpg"
+    },
+    {
+        "nameEnglish": "Special Sweets",
+        "nameMarathi": "स्पेशल स्विटस्",
+        "image": "img/special_sweets.jpg"
+    },
+    {
+        "nameEnglish": "Kalakand",
+        "nameMarathi": "कलाकंद",
+        "image": "img/kalakand1.jpg"
+    },
+    {
+        "nameEnglish": "Fika Peda",
+        "nameMarathi": "फिका पेढा",
+        "image": "img/skandipedha.jpg"
+    }
+]

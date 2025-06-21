@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order - लांजेकर मिठाई भंडार</title>
+  <link rel="stylesheet" href="order.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&family=Tiro+Devanagari+Marathi&display=swap" rel="stylesheet" />
+  <script>
+    // Parse URL Params
+    function getParams() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const product = urlParams.get('product');
+      const quantity = urlParams.get('quantity');
+      document.getElementById('product-name').textContent = product || 'Product';
+      document.getElementById('product-qty').textContent = quantity || 'Quantity';
+    }
+    window.onload = getParams;
+  </script>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">लांजेकर मिठाई भंडार</a>
+    <ul class="nav-menu">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <a href="cart.html">Cart</a>
+    </ul>
+  </nav>
+
+  <main class="order-section">
+    <h1 class="marathi-font">तुमची ऑर्डर तपशील / Order Details</h1>
+    
+    <div class="order-summary">
+      <p><strong>Product:</strong> <span id="product-name"></span></p>
+      <p><strong>Quantity:</strong> <span id="product-qty"></span></p>
+    </div>
+
+    <form action="thankyou.html" method="POST" class="order-form">
+      <label for="fullname">Full Name:</label>
+      <input type="text" id="fullname" name="fullname" required>
+
+      <label for="mobile">Mobile Number:</label>
+      <input type="tel" id="mobile" name="mobile" required pattern="[0-9]{10}">
+
+      <label for="address">Delivery Address:</label>
+      <textarea id="address" name="address" rows="4" required></textarea>
+
+      <label for="delivery">Delivery Option:</label>
+      <select id="delivery" name="delivery">
+        <option value="home">Home Delivery</option>
+        <option value="pickup">Shop Pickup</option>
+      </select>
+
+      <button type="submit">Confirm Order</button>
+    </form>
+  </main>
+</body>
+</html>

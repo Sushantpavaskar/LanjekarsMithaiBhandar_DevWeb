@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us - Lanjekar Mithai Bhandar</title>
+  <link rel="stylesheet" href="contact.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">Lanjekar Mithai Bhandar</a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="products.html" class="nav-link">Products</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="contact.html" class="nav-link active">Contact</a></li>
+         <li><a href="order.html" class="nav-link active">Order</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="contact-container">
+    <h1 class="page-title marathi-font">संपर्क करा / Contact Us</h1>
+
+    <div class="contact-box">
+      <form class="contact-form">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="Enter your name" required />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Enter your email" required />
+
+        <label for="message">Message</label>
+        <textarea id="message" rows="5" placeholder="Write your message" required></textarea>
+
+        <button type="submit">Send Message</button>
+      </form>
+
+      <div class="contact-info">
+        <h2 class="info-title">Store Details</h2>
+        <p><strong>Owner:</strong> Rohit Lanjekar</p>
+        <p><strong>Address:</strong> Lanjekar Mithai Bhandar, MSEB Rd, Vishrambag,<br>Sangli, Maharashtra 416415</p>
+        <p><strong>Phone:</strong> +91 98765 43210</p>
+        <p><strong>Email:</strong> contact@lanjekarmithai.in</p>
+      </div>
+    </div>
+
+    <div class="map-container">
+      <iframe
+        src="https://www.google.com/maps?q=Lanjekar+Mithai+Bhandar,+MSEB+Rd,+Vishrambag,+Sangli,+Maharashtra+416415&output=embed"
+        width="100%"
+        height="400"
+        style="border:0; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+  </main>
+</body>
+</html>
