@@ -6,34 +6,212 @@
   <title>Our Products - Lanjekar Mithai Bhandar</title>
   <link rel="stylesheet" href="products.css" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet" />
-  <script>
-    function addToCart(productName) {
-      const quantity = prompt("Please enter quantity: 250g, 500g or 1kg");
-      if (quantity) {
-        const orderUrl = `order.html?product=${encodeURIComponent(productName)}&quantity=${encodeURIComponent(quantity)}`;
-        window.location.href = orderUrl;
-      }
+  <style>
+    /* Cart icon + badge */
+    .cart-icon-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,.15);
+      margin-left: 12px;
+      cursor: pointer;
     }
+    .cart-icon-wrap:hover { transform: translateY(-1px); }
+    .cart-icon { width: 26px; height: 26px; display:block; }
+    .cart-badge {
+      position: absolute;
+      top: -6px; right: -6px;
+      min-width: 20px; height: 20px;
+      padding: 0 6px;
+      background: #e53935; color:#fff;
+      font-size: 12px; font-weight: 700;
+      border-radius: 999px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    }
+    .nav-container { display:flex; align-items:center; justify-content:space-between; padding: 10px 16px; }
+    .nav-right { display:flex; align-items:center; gap:10px; }
+    .add-cart { cursor:pointer; }
+    .toast {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      bottom: 20px; background:#2e7d32; color:#fff;
+      padding:10px 14px; border-radius:8px; font-weight:600;
+      box-shadow: 0 4px 10px rgba(0,0,0,.25);
+      opacity:0; pointer-events:none; transition: opacity .25s ease;
+      z-index: 9999;
+    }
+    .toast.show { opacity: 1; }
+
+    /* ---- Cart badge bounce ---- */
+    @keyframes bounce {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.4); }
+    }
+    .cart-badge.bump {
+      animation: bounce 0.4s ease;
+    }
+
+    /* ---- Fly image animation ---- */
+    .fly-img {
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      transition: all 0.8s cubic-bezier(.65,-0.1,.35,1.1);
+      width: 80px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.25);
+    }
+        footer {
+      text-align: center;
+      background-color: #fff3cd;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #5d4037;
+      margin-top: 2rem;
+    }
+  </style>
+
+  <script>
+    const priceMap = {
+      'Lanjekar Bhadang': 280,
+      'Special Talav Pohe Chivda': 300,
+      'Maka Chivda': 300,
+      'Special Tikhat Batata Chivda': 320,
+      'Sweet Potato Chivda': 320,
+      'Pohe Chivda': 160,
+      'Khoya Barfi': 600,
+      'Lanjekar Barfi': 600,
+      'Malai Barfi': 640,
+      'Mango Barfi': 640,
+      'Kaju Katli': 1120,
+      'Plain Peda': 600,
+      'Cream Peda': 640,
+      'Dink Ladoo': 480,
+      'Besan Ladoo': 600,
+      'Peanut Ladoo': 300,
+      'Motichur Ladoo': 300,
+      'Date Roll': 640,
+      'Kunda': 600,
+      'Ginger Candy': 40,
+      'Basundi': 300,
+      'Shrikhand': 270,
+      'Kalakand': 270,
+      'Mysore Pak': 250,
+      'Gulab Jamun': 200,
+      'Mango Shrikhand': 320,
+      'Bhajani Chakli': 220,
+      'Bakarwadi': 260,
+      'All Namkeen': 200,
+      'Farsan': 220
+    };
+
+    function getCart(){ try { return JSON.parse(localStorage.getItem("cart")) || []; } catch { return []; } }
+    function saveCart(c){ localStorage.setItem("cart", JSON.stringify(c)); }
+
+    function normalizeCart(c){
+      let changed=false;
+      c.forEach(it=>{
+        if (typeof it.quantity === "string" && /(?:g|kg)\b/i.test(it.quantity)) {
+          it.weight = it.quantity; it.quantity = 1; changed=true;
+        }
+        if (!it.weight) it.weight = "1kg";
+        if (!Number.isFinite(it.basePrice)) it.basePrice = Number(it.price)||0;
+        if (!Number.isFinite(it.quantity) || it.quantity < 1) it.quantity = 1;
+      });
+      if (changed) saveCart(c);
+      return c;
+    }
+
+    function cartCount(){
+      const c = normalizeCart(getCart());
+      return c.reduce((sum, i)=> sum + (Number(i.quantity)||1), 0);
+    }
+
+    function updateCartBadge(){
+      const el = document.getElementById("cartCount");
+      if (!el) return;
+      el.textContent = cartCount();
+    }
+
+    function toast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(()=> t.classList.remove('show'), 1200);
+    }
+
+function addToCart(name_en, name_mr, imagePath, event){
+    const cart = normalizeCart(getCart());
+    const basePrice = priceMap[name_en] || 0;
+    const weight = "1kg";
+    const idx = cart.findIndex(p => p.name_en === name_en && p.weight === weight);
+    if (idx > -1) cart[idx].quantity += 1;
+    else cart.push({name_en, name_mr, image:imagePath, basePrice, weight, quantity:1});
+    saveCart(cart);
+    updateCartBadge();
+
+    // ---- Flying image animation ----
+    const cartIcon = document.querySelector(".cart-icon-wrap");
+    const img = document.createElement("img");
+    img.src = imagePath;
+    img.className = "fly-img";
+    document.body.appendChild(img);
+
+    const rect = event.target.getBoundingClientRect();
+    img.style.left = rect.left + "px";
+    img.style.top = rect.top + "px";
+
+    const cartRect = cartIcon.getBoundingClientRect();
+    setTimeout(() => {
+      img.style.left = cartRect.left + cartRect.width/2 + "px";
+      img.style.top = cartRect.top + cartRect.height/2 + "px";
+      img.style.width = "20px";
+      img.style.opacity = "0.3";
+    }, 50);
+
+    setTimeout(()=> img.remove(), 900);
+
+    // ---- Bounce cart badge ----
+    const badge = document.getElementById("cartCount");
+    badge.classList.remove("bump");
+    void badge.offsetWidth;
+    badge.classList.add("bump");
+
+    toast(`${name_mr ? name_mr : name_en} कार्टमध्ये टाकले`);
+}
+
+
+    document.addEventListener('DOMContentLoaded', updateCartBadge);
   </script>
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-container">
       <a href="index.html" class="nav-logo">लांजेकर मिठाई भंडार</a>
-      <ul class="nav-menu">
-        <li><a href="index.html" class="nav-link">Home</a></li>
-        <li><a href="products.html" class="nav-link active">Products</a></li>
-        <li><a href="about.html" class="nav-link">About</a></li>
-        <li><a href="contact.html" class="nav-link">Contact</a></li>
-        <li><a href="cart.html" class="nav-link">Cart</a></li>
-        <li><a href="order.html" class="nav-link">Order</a></li>
-      </ul>
+      <div class="nav-right">
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="products.html" class="nav-link active">Products</a></li>
+          <li><a href="about.html" class="nav-link">About</a></li>
+          <li><a href="contact.html" class="nav-link">Contact</a></li>
+          <li><a href="order.html" class="nav-link">Order</a></li>
+        </ul>
+        <a href="cart.html" class="cart-icon-wrap" title="Cart">
+          <svg class="cart-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M7 18a2 2 0 1 0 .001 3.999A2 2 0 0 0 7 18zm10 0a2 2 0 1 0 .001 3.999A2 2 0 0 0 17 18zM5.1 5h15.6a1 1 0 0 1 .98 1.2l-1.6 8A1 1 0 0 1 19.1 15H8.2l-.3 1.5a1 1 0 0 1-.98.8H4a1 1 0 1 1 0-2h1.2l1.7-8.6A1 1 0 0 1 8 5h11a1 1 0 1 1 0 2H8.9l-.4 2H19a1 1 0 1 1 0 2H8.1l-.4 2H19a1 1 0 0 1 0 2H7.7"/>
+          </svg>
+          <span class="cart-badge" id="cartCount">0</span>
+        </a>
+      </div>
     </div>
   </nav>
 
   <main class="main-content">
     <h1 class="page-title marathi-font">आमची उत्पादने / Our Products</h1>
-
     <p class="product-note">
       * कृपया नोंद घ्या: सर्व उत्पादने यांची किंमत बाजारभावावर अवलंबून असते. <br />
       * Note: Product prices are subject to market rates.
@@ -43,12 +221,13 @@
     <section class="category">
       <h2 class="category-title">Bhadang & Chivda</h2>
       <div class="product-grid">
-        <div class="product-card"><img src="img/bhadangS.jpg" alt="Lanjekar Bhadang" /><div class="product-name marathi-font">लांजेकर भडंग</div><div class="product-name-en">Lanjekar Bhadang</div><div class="product-price">₹160/kg</div><button class="add-cart" onclick="addToCart('Lanjekar Bhadang')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/S Fried Flattened Rice Mixture.jpg" alt="Special Talav Pohe Chivda" /><div class="product-name marathi-font">स्पेशल तळीव पोहे चिवडा</div><div class="product-name-en">Special Talav Pohe Chivda</div><div class="product-price">₹180/kg</div><button class="add-cart" onclick="addToCart('Special Talav Pohe Chivda')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/cornflakes chivda.jpg" alt="Maka Chivda" /><div class="product-name marathi-font">मका चिवडा</div><div class="product-name-en">Maka Chivda</div><div class="product-price">₹170/kg</div><button class="add-cart" onclick="addToCart('Maka Chivda')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/batat-tikhat.jpg" alt="Special Tikhat Batata Chivda" /><div class="product-name marathi-font">स्पेशल तिखट बटाटा चिवडा</div><div class="product-name-en">Special Tikhat Batata Chivda</div><div class="product-price">₹190/kg</div><button class="add-cart" onclick="addToCart('Special Tikhat Batata Chivda')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/SSPotatoChivda.jpg" alt="Sweet Potato Chivda" /><div class="product-name marathi-font">गोड बटाटा चिवडा</div><div class="product-name-en">Sweet Potato Chivda</div><div class="product-price">₹180/kg</div><button class="add-cart" onclick="addToCart('Sweet Potato Chivda')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/SpChivda.jpg" alt="Pohe Chivda" /><div class="product-name marathi-font">पोहे चिवडा</div><div class="product-name-en">Pohe Chivda</div><div class="product-price">₹160/kg</div><button class="add-cart" onclick="addToCart('Pohe Chivda')">Add to Cart</button></div>
+       <div class="product-card"><img src="img/bhadangS.jpg" alt="Lanjekar Bhadang" /><div class="product-name marathi-font">लांजेकर भडंग</div><div class="product-name-en">Lanjekar Bhadang</div><div class="product-price">₹280/kg</div><button class="add-cart" onclick="addToCart('Lanjekar Bhadang','लांजेकर भडंग','img/bhadangS.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/S Fried Flattened Rice Mixture.jpg" alt="Special Talav Pohe Chivda" /><div class="product-name marathi-font">स्पेशल तळीव पोहे चिवडा</div><div class="product-name-en">Special Talav Pohe Chivda</div><div class="product-price">₹300/kg</div><button class="add-cart" onclick="addToCart('Special Talav Pohe Chivda','स्पेशल तळीव पोहे चिवडा','img/S Fried Flattened Rice Mixture.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/cornflakes chivda.jpg" alt="Maka Chivda" /><div class="product-name marathi-font">मका चिवडा</div><div class="product-name-en">Maka Chivda</div><div class="product-price">₹300/kg</div><button class="add-cart" onclick="addToCart('Maka Chivda','मका चिवडा','img/cornflakes chivda.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/batat-tikhat.jpg" alt="Special Tikhat Batata Chivda" /><div class="product-name marathi-font">स्पेशल तिखट बटाटा चिवडा</div><div class="product-name-en">Special Tikhat Batata Chivda</div><div class="product-price">₹320/kg</div><button class="add-cart" onclick="addToCart('Special Tikhat Batata Chivda','स्पेशल तिखट बटाटा चिवडा','img/batat-tikhat.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/SSPotatoChivda.jpg" alt="Sweet Potato Chivda" /><div class="product-name marathi-font">गोड बटाटा चिवडा</div><div class="product-name-en">Sweet Potato Chivda</div><div class="product-price">₹320/kg</div><button class="add-cart" onclick="addToCart('Sweet Potato Chivda','गोड बटाटा चिवडा','img/SSPotatoChivda.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/SpChivda.jpg" alt="Pohe Chivda" /><div class="product-name marathi-font">पोहे चिवडा</div><div class="product-name-en">Pohe Chivda</div><div class="product-price">₹160/kg</div><button class="add-cart" onclick="addToCart('Pohe Chivda','पोहे चिवडा','img/SpChivda.jpg',event)">Add to Cart</button></div>
+
       </div>
     </section>
 
@@ -56,11 +235,12 @@
     <section class="category">
       <h2 class="category-title">Barfi</h2>
       <div class="product-grid">
-        <div class="product-card"><img src="img/khava-barfi.jpg" alt="Khoya Barfi" /><div class="product-name marathi-font">खवा बर्फी</div><div class="product-name-en">Khoya Barfi</div><div class="product-price">₹320/kg</div><button class="add-cart" onclick="addToCart('Khoya Barfi')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/Lanjekar Barfi.jpg" alt="Lanjekar Barfi" /><div class="product-name marathi-font">लांजेकर बर्फी</div><div class="product-name-en">Lanjekar Barfi</div><div class="product-price">₹340/kg</div><button class="add-cart" onclick="addToCart('Lanjekar Barfi')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/Malai Barfi.jpg" alt="Malai Barfi" /><div class="product-name marathi-font">मलाई बर्फी</div><div class="product-name-en">Malai Barfi</div><div class="product-price">₹330/kg</div><button class="add-cart" onclick="addToCart('Malai Barfi')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/Aamba Barfi.jpg" alt="Mango Barfi" /><div class="product-name marathi-font">आंबा बर्फी</div><div class="product-name-en">Mango Barfi</div><div class="product-price">₹350/kg</div><button class="add-cart" onclick="addToCart('Mango Barfi')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/Kaju Katli.jpg" alt="Kaju Katli" /><div class="product-name marathi-font">काजू कतली</div><div class="product-name-en">Kaju Katli</div><div class="product-price">₹450/kg</div><button class="add-cart" onclick="addToCart('Kaju Katli')">Add to Cart</button></div>
+        <div class="product-card"><img src="img/khava-barfi.jpg" alt="Khoya Barfi" /><div class="product-name marathi-font">खवा बर्फी</div><div class="product-name-en">Khoya Barfi</div><div class="product-price">₹600/kg</div><button class="add-cart" onclick="addToCart('Khoya Barfi','खवा बर्फी','img/khava-barfi.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/Lanjekar Barfi.jpg" alt="Lanjekar Barfi" /><div class="product-name marathi-font">लांजेकर बर्फी</div><div class="product-name-en">Lanjekar Barfi</div><div class="product-price">₹600/kg</div><button class="add-cart" onclick="addToCart('Lanjekar Barfi','लांजेकर बर्फी','img/Lanjekar Barfi.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/Malai Barfi.jpg" alt="Malai Barfi" /><div class="product-name marathi-font">मलाई बर्फी</div><div class="product-name-en">Malai Barfi</div><div class="product-price">₹640/kg</div><button class="add-cart" onclick="addToCart('Malai Barfi','मलाई बर्फी','img/Malai Barfi.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/Aamba Barfi.jpg" alt="Mango Barfi" /><div class="product-name marathi-font">आंबा बर्फी</div><div class="product-name-en">Mango Barfi</div><div class="product-price">₹640/kg</div><button class="add-cart" onclick="addToCart('Mango Barfi','आंबा बर्फी','img/Aamba Barfi.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/Kaju Katli.jpg" alt="Kaju Katli" /><div class="product-name marathi-font">काजू कतली</div><div class="product-name-en">Kaju Katli</div><div class="product-price">₹1120/kg</div><button class="add-cart" onclick="addToCart('Kaju Katli','काजू कतली','img/Kaju Katli.jpg',event)">Add to Cart</button></div>
+
       </div>
     </section>
 
@@ -68,19 +248,20 @@
     <section class="category">
       <h2 class="category-title">Peda</h2>
       <div class="product-grid">
-        <div class="product-card"><img src="img/Fike Pede.jpg" alt="Plain Peda" /><div class="product-name marathi-font">फिके पेढे</div><div class="product-name-en">Plain Peda</div><div class="product-price">₹320/kg</div><button class="add-cart" onclick="addToCart('Plain Peda')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/Mpedha.jpg" alt="Cream Peda" /><div class="product-name marathi-font">मलाई पेढे</div><div class="product-name-en">Cream Peda</div><div class="product-price">₹350/kg</div><button class="add-cart" onclick="addToCart('Cream Peda')">Add to Cart</button></div>
-      </div>
+       <div class="product-card"><img src="img/Fike Pede.jpg" alt="Plain Peda" /><div class="product-name marathi-font">फिके पेढे</div><div class="product-name-en">Plain Peda</div><div class="product-price">₹600/kg</div><button class="add-cart" onclick="addToCart('Plain Peda','फिके पेढे','img/Fike Pede.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/Mpedha.jpg" alt="Cream Peda" /><div class="product-name marathi-font">मलाई पेढे</div><div class="product-name-en">Cream Peda</div><div class="product-price">₹640/kg</div><button class="add-cart" onclick="addToCart('Cream Peda','मलाई पेढे','img/Mpedha.jpg',event)">Add to Cart</button></div>
+
     </section>
 
     <!-- Ladoo Category -->
     <section class="category">
       <h2 class="category-title">Ladoo</h2>
       <div class="product-grid">
-        <div class="product-card"><img src="img/dink.jpg" alt="Dink Ladoo" /><div class="product-name marathi-font">डिंक लाडू</div><div class="product-name-en">Dink Ladoo</div><div class="product-price">₹300/kg</div><button class="add-cart" onclick="addToCart('Dink Ladoo')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/Besan Ladoo.jpg" alt="Besan Ladoo" /><div class="product-name marathi-font">बेसन लाडू</div><div class="product-name-en">Besan Ladoo</div><div class="product-price">₹280/kg</div><button class="add-cart" onclick="addToCart('Besan Ladoo')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/Shengdana Ladoo.jpg" alt="Peanut Ladoo" /><div class="product-name marathi-font">शेंगदाणा लाडू</div><div class="product-name-en">Peanut Ladoo</div><div class="product-price">₹290/kg</div><button class="add-cart" onclick="addToCart('Peanut Ladoo')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/Motichur Ladoo.jpg" alt="Motichur Ladoo" /><div class="product-name marathi-font">मोतीचूर लाडू</div><div class="product-name-en">Motichur Ladoo</div><div class="product-price">₹320/kg</div><button class="add-cart" onclick="addToCart('Motichur Ladoo')">Add to Cart</button></div>
+        <div class="product-card"><img src="img/dink.jpg" alt="Dink Ladoo" /><div class="product-name marathi-font">डिंक लाडू</div><div class="product-name-en">Dink Ladoo</div><div class="product-price">₹480/kg</div><button class="add-cart" onclick="addToCart('Dink Ladoo','डिंक लाडू','img/dink.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/Besan Ladoo.jpg" alt="Besan Ladoo" /><div class="product-name marathi-font">बेसन लाडू</div><div class="product-name-en">Besan Ladoo</div><div class="product-price">₹600/kg</div><button class="add-cart" onclick="addToCart('Besan Ladoo','बेसन लाडू','img/Besan Ladoo.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/Shengdana Ladoo.jpg" alt="Peanut Ladoo" /><div class="product-name marathi-font">शेंगदाणा लाडू</div><div class="product-name-en">Peanut Ladoo</div><div class="product-price">₹300/kg</div><button class="add-cart" onclick="addToCart('Peanut Ladoo','शेंगदाणा लाडू','img/Shengdana Ladoo.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/Motichur Ladoo.jpg" alt="Motichur Ladoo" /><div class="product-name marathi-font">मोतीचूर लाडू</div><div class="product-name-en">Motichur Ladoo</div><div class="product-price">₹300/kg</div><button class="add-cart" onclick="addToCart('Motichur Ladoo','मोतीचूर लाडू','img/Motichur Ladoo.jpg',event)">Add to Cart</button></div>
+
       </div>
     </section>
 
@@ -88,15 +269,16 @@
     <section class="category">
       <h2 class="category-title">Other Traditional Sweets</h2>
       <div class="product-grid">
-        <div class="product-card"><img src="img/Khajur Roll.jpg" alt="Date Roll" /><div class="product-name marathi-font">खजूर रोल</div><div class="product-name-en">Date Roll</div><div class="product-price">₹350/kg</div><button class="add-cart" onclick="addToCart('Date Roll')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/kunda.jpg" alt="Kunda" /><div class="product-name marathi-font">कुंदा</div><div class="product-name-en">Kunda</div><div class="product-price">₹280/kg</div><button class="add-cart" onclick="addToCart('Kunda')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/Alepakk.jpg" alt="Ginger Candy" /><div class="product-name marathi-font">आलेपाक</div><div class="product-name-en">Ginger Candy</div><div class="product-price">₹200/kg</div><button class="add-cart" onclick="addToCart('Ginger Candy')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/Basundi1.jpg" alt="Basundi" /><div class="product-name marathi-font">बासुंदी</div><div class="product-name-en">Basundi</div><div class="product-price">₹300/litre</div><button class="add-cart" onclick="addToCart('Basundi')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/shrikhand.jpg" alt="Shrikhand" /><div class="product-name marathi-font">श्रीखंड</div><div class="product-name-en">Shrikhand</div><div class="product-price">₹300/kg</div><button class="add-cart" onclick="addToCart('Shrikhand')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/kalakand1.jpg" alt="Kalakand" /><div class="product-name marathi-font">कलाकंद</div><div class="product-name-en">Kalakand</div><div class="product-price">₹280/kg</div><button class="add-cart" onclick="addToCart('Kalakand')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/Maisur Pakh.jpg" alt="Mysore Pak" /><div class="product-name marathi-font">म्हैसूरपाक</div><div class="product-name-en">Mysore Pak</div><div class="product-price">₹250/kg</div><button class="add-cart" onclick="addToCart('Mysore Pak')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/gulab-jamun.jpg" alt="Gulab Jamun" /><div class="product-name marathi-font">गुलाबजाम</div><div class="product-name-en">Gulab Jamun</div><div class="product-price">₹200/kg</div><button class="add-cart" onclick="addToCart('Gulab Jamun')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/AmraK.jpg" alt="Mango Shrikhand" /><div class="product-name marathi-font">आम्रखंड</div><div class="product-name-en">Mango Shrikhand</div><div class="product-price">₹320/kg</div><button class="add-cart" onclick="addToCart('Mango Shrikhand')">Add to Cart</button></div>
+        <div class="product-card"><img src="img/Khajur Roll.jpg" alt="Date Roll" /><div class="product-name marathi-font">खजूर रोल</div><div class="product-name-en">Date Roll</div><div class="product-price">₹640/kg</div><button class="add-cart" onclick="addToCart('Date Roll','खजूर रोल','img/Khajur Roll.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/kunda.jpg" alt="Kunda" /><div class="product-name marathi-font">कुंदा</div><div class="product-name-en">Kunda</div><div class="product-price">₹600/kg</div><button class="add-cart" onclick="addToCart('Kunda','कुंदा','img/kunda.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/Alepakk.jpg" alt="Ginger Candy" /><div class="product-name marathi-font">आलेपाक</div><div class="product-name-en">Ginger Candy</div><div class="product-price">₹40/per pease</div><button class="add-cart" onclick="addToCart('Ginger Candy','आलेपाक','img/Alepakk.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/Basundi1.jpg" alt="Basundi" /><div class="product-name marathi-font">बासुंदी</div><div class="product-name-en">Basundi</div><div class="product-price">₹300/litre</div><button class="add-cart" onclick="addToCart('Basundi','बासुंदी','img/Basundi1.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/shrikhand.jpg" alt="Shrikhand" /><div class="product-name marathi-font">श्रीखंड</div><div class="product-name-en">Shrikhand</div><div class="product-price">₹270/kg</div><button class="add-cart" onclick="addToCart('Shrikhand','श्रीखंड','img/shrikhand.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/kalakand1.jpg" alt="Kalakand" /><div class="product-name marathi-font">कलाकंद</div><div class="product-name-en">Kalakand</div><div class="product-price">₹270/kg</div><button class="add-cart" onclick="addToCart('Kalakand','कलाकंद','img/kalakand1.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/Maisur Pakh.jpg" alt="Mysore Pak" /><div class="product-name marathi-font">म्हैसूरपाक</div><div class="product-name-en">Mysore Pak</div><div class="product-price">₹250/kg</div><button class="add-cart" onclick="addToCart('Mysore Pak','म्हैसूरपाक','img/Maisur Pakh.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/gulab-jamun.jpg" alt="Gulab Jamun" /><div class="product-name marathi-font">गुलाबजाम</div><div class="product-name-en">Gulab Jamun</div><div class="product-price">₹200/kg</div><button class="add-cart" onclick="addToCart('Gulab Jamun','गुलाबजाम','img/gulab-jamun.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/AmraK.jpg" alt="Mango Shrikhand" /><div class="product-name marathi-font">आम्रखंड</div><div class="product-name-en">Mango Shrikhand</div><div class="product-price">₹320/kg</div><button class="add-cart" onclick="addToCart('Mango Shrikhand','आम्रखंड','img/AmraK.jpg',event)">Add to Cart</button></div>
+
       </div>
     </section>
 
@@ -104,13 +286,18 @@
     <section class="category">
       <h2 class="category-title">Other Savory Snacks</h2>
       <div class="product-grid">
-        <div class="product-card"><img src="img/chakli1.jpg" alt="Bhajani Chakli" /><div class="product-name marathi-font">भाजणी चकली</div><div class="product-name-en">Bhajani Chakli</div><div class="product-price">₹220/kg</div><button class="add-cart" onclick="addToCart('Bhajani Chakli')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/bakarwadi.jpg" alt="Bakarwadi" /><div class="product-name marathi-font">बाकरवडी</div><div class="product-name-en">Bakarwadi</div><div class="product-price">₹260/kg</div><button class="add-cart" onclick="addToCart('Bakarwadi')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/All Nakin1.jpg" alt="All Namkeen" /><div class="product-name marathi-font">सर्व प्रकारचे नमकीन</div><div class="product-name-en">All Namkeen</div><div class="product-price">₹200/kg</div><button class="add-cart" onclick="addToCart('All Namkeen')">Add to Cart</button></div>
-        <div class="product-card"><img src="img/farsan.jpg" alt="Farsan" /><div class="product-name marathi-font">फरसाणा</div><div class="product-name-en">Farsan</div><div class="product-price">₹220/kg</div><button class="add-cart" onclick="addToCart('Farsan')">Add to Cart</button></div>
+        <div class="product-card"><img src="img/chakli1.jpg" alt="Bhajani Chakli" /><div class="product-name marathi-font">भाजणी चकली</div><div class="product-name-en">Bhajani Chakli</div><div class="product-price">₹220/kg</div><button class="add-cart" onclick="addToCart('Bhajani Chakli','भाजणी चकली','img/chakli1.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/bakarwadi.jpg" alt="Bakarwadi" /><div class="product-name marathi-font">बाकरवडी</div><div class="product-name-en">Bakarwadi</div><div class="product-price">₹260/kg</div><button class="add-cart" onclick="addToCart('Bakarwadi','बाकरवडी','img/bakarwadi.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/All Nakin1.jpg" alt="All Namkeen" /><div class="product-name marathi-font">सर्व प्रकारचे नमकीन</div><div class="product-name-en">All Namkeen</div><div class="product-price">₹200/kg</div><button class="add-cart" onclick="addToCart('All Namkeen','सर्व प्रकारचे नमकीन','img/All Nakin1.jpg',event)">Add to Cart</button></div>
+<div class="product-card"><img src="img/farsan.jpg" alt="Farsan" /><div class="product-name marathi-font">फरसाणा</div><div class="product-name-en">Farsan</div><div class="product-price">₹220/kg</div><button class="add-cart" onclick="addToCart('Farsan','फरसाणा','img/farsan.jpg',event)">Add to Cart</button></div>
+
       </div>
     </section>
 
   </main>
+    <!-- Footer -->
+  <footer>
+    FSSAI Lic. 21518312000746 | © 2025 लांजेकर मिठाई भंडार
+  </footer>
 </body>
 </html>

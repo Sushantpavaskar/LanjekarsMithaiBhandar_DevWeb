@@ -6,45 +6,294 @@
   <title>Cart - लांजेकर मिठाई भंडार</title>
   <link rel="stylesheet" href="cart.css" />
   <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi&display=swap" rel="stylesheet" />
+  <style>
+    body { margin: 0; font-family: 'Tiro Devanagari Marathi', serif; background-color: #fff7ee; }
+    .navbar { background-color: #ffedc2; display:flex; justify-content:space-between; align-items:center; padding:10px 30px; box-shadow:0 2px 5px rgba(0,0,0,.1); }
+    .logo-area { display:flex; align-items:center; }
+    .logo-img { width:80px; margin-right:10px; }
+    .brand-title { font-size:1.4rem; font-weight:700; color:#4a2d16; margin:0; }
+    .tagline { font-size:.9rem; color:#805f3f; margin:0; }
+    .nav-links a { margin-left:20px; text-decoration:none; color:#3c2415; font-weight:600; }
+    .cart-container { max-width:960px; margin:30px auto; padding:20px; background:#fff; border-radius:12px; box-shadow:0 0 20px rgba(0,0,0,.1); }
+    .cart-card { background:#fff3e6; border:1px solid #ffddbb; border-radius:8px; padding:15px; margin-bottom:15px; display:flex; gap:12px; align-items:center; }
+    .cart-card img { width:80px; height:80px; object-fit:cover; border-radius:6px; flex:0 0 auto; }
+    .item-details { flex:1; }
+    .item-title { margin:0 0 6px; color:#42210b; font-size:1.05rem; line-height:1.3; }
+    .en { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; font-size:.92rem; color:#6b4b2a; }
+    .row { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin:6px 0; }
+    label { color:#5b3a1e; font-weight:600; margin-right:6px; }
+    select, input[type="number"] { padding:6px 8px; border-radius:6px; border:1px solid #cfcfcf; min-width:90px; }
+    .qty-wrap { display:flex; align-items:center; gap:6px; }
+    .qty-btn { width:32px; height:32px; border-radius:6px; border:1px solid #cfcfcf; background:#fff; cursor:pointer; font-weight:700; }
+    .price-line { margin:4px 0 0; color:#4a2d16; font-weight:700; }
+    .remove-btn { background:none; border:none; font-size:22px; color:#c92a2a; cursor:pointer; }
+    .cart-summary { padding:20px; background:#fff1dd; border-radius:10px; text-align:right; margin-top:20px; }
+    .total-price { font-size:1.6rem; font-weight:800; margin:10px 0; color:#4a2d16; }
+    .checkout-btn { background:#ffc400; color:#421f00; font-size:1rem; font-weight:700; border:none; border-radius:8px; padding:10px 24px; cursor:pointer; }
+    .empty-message { color:#a94442; font-size:1rem; text-align:center; }
+        footer {
+      text-align: center;
+      background-color: #fff3cd;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #5d4037;
+      margin-top: 2rem;
+    }
+  </style>
 </head>
 <body>
-  <header class="cart-header">
-    <h1 class="brand-name">लांजेकर मिठाई भंडार</h1>
-    <p class="tagline">Order Summary / ऑर्डर सारांश</p>
-  </header>
 
-  <main class="cart-container">
-    <div class="cart-items">
-      <div class="cart-card">
-        <img src="img/motichurLadoo.jpg" alt="Motichur Ladoo">
-        <div class="item-details">
-          <h2 class="item-name marathi">मोतीचूर लाडू</h2>
-          <p class="item-qty">500g</p>
-          <p class="item-price">₹160</p>
-        </div>
-        <button class="remove-btn">✖</button>
-      </div>
-
-      <div class="cart-card">
-        <img src="img/poheChivda.jpg" alt="Pohe Chivda">
-        <div class="item-details">
-          <h2 class="item-name marathi">पोहे चिवडा</h2>
-          <p class="item-qty">250g</p>
-          <p class="item-price">₹90</p>
-        </div>
-        <button class="remove-btn">✖</button>
+  <!-- Header -->
+  <header class="navbar">
+    <div class="logo-area">
+      <img src="img/Adobe Express - file.png" alt="Lanjekar Logo" class="logo-img" />
+      <div>
+        <p class="brand-title">लांजेकर मिठाई भंडार</p>
+        <p class="tagline">ओळख सांगलीची..</p>
       </div>
     </div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="products.html">Products</a>
+      <a href="contact.html">Contact</a>
+      <a href="cart.html">Cart</a>
+      <a href="order.html">Order</a>
+    </div>
+  </header>
+
+  <!-- Cart -->
+  <main class="cart-container">
+    <div id="cartItems"></div>
 
     <aside class="cart-summary">
       <h3>एकूण / Total</h3>
-      <p class="total-price">₹250</p>
-      <button class="checkout-btn">पुष्टी करा / Checkout</button>
+      <p class="total-price" id="totalPrice">₹0</p>
+      <button class="checkout-btn" id="checkoutBtn">पुष्टी करा / Checkout</button>
     </aside>
   </main>
 
-  <footer class="cart-footer">
-    <p>© 2025 लांजेकर मिठाई भंडार, मुंबई</p>
+  <!-- <footer>© 2025 लांजेकर मिठाई भंडार, सांगली</footer> -->
+
+  <script>
+    const cartItemsContainer = document.getElementById("cartItems");
+    const totalPriceEl = document.getElementById("totalPrice");
+
+    const DEFAULT_WEIGHT_OPTIONS = ["250g","500g","750g","1kg","1.5kg","2kg"];
+
+    // --- Helpers ---
+    const money = (n) => "₹" + (Math.round((Number(n)||0))).toLocaleString("en-IN");
+    const isWeightString = (v) => typeof v === "string" && /\b(?:\d+(?:\.\d+)?)\s*(?:g|kg)\b/i.test(v);
+
+    function normalizeWeightString(w) {
+      if (!w) return "1kg";
+      w = String(w).toLowerCase().replace(/\s+/g, "");
+      // convert grams like 1000g -> 1kg
+      const mG = w.match(/^(\d+(?:\.\d+)?)g$/);
+      const mKG = w.match(/^(\d+(?:\.\d+)?)kg$/);
+      if (mG) {
+        const kg = parseFloat(mG[1]) / 1000;
+        return (kg % 1 === 0 ? kg.toFixed(0) : kg.toString()) + "kg";
+      }
+      if (mKG) return parseFloat(mKG[1]) + "kg";
+      // standard options fallbacks
+      if (["250g","500g","750g"].includes(w)) return w;
+      if (["1kg","1.5kg","2kg"].includes(w)) return w;
+      return "1kg";
+    }
+
+    function weightMultiplier(weight) {
+      const w = normalizeWeightString(weight);
+      if (w.endsWith("kg")) return parseFloat(w);
+      if (w.endsWith("g")) return parseInt(w,10) / 1000;
+      return 1;
+    }
+
+    function getCart(){ try { return JSON.parse(localStorage.getItem("cart")) || []; } catch { return []; } }
+    function saveCart(c){ localStorage.setItem("cart", JSON.stringify(c)); }
+
+    // Repair & normalize items so old data also works
+    function normalizeCart(cart) {
+      let changed = false;
+      cart.forEach(it => {
+        // move mistaken "quantity:'1kg'" into weight
+        if (isWeightString(it.quantity)) { it.weight = it.quantity; it.quantity = 1; changed = true; }
+
+        // names
+        it.displayNameMR = it.name_mr || "";
+        it.displayNameEN = it.name_en || it.name || "";
+
+        // price (per 1kg)
+        let bp = Number(it.basePrice ?? it.price ?? 0);
+        if (!isFinite(bp) || bp < 0) { bp = 0; }
+        if (it.basePrice !== bp) { it.basePrice = bp; changed = true; }
+
+        // weight
+        const w = normalizeWeightString(it.weight || (it.weightOption) || "1kg");
+        if (it.weight !== w) { it.weight = w; changed = true; }
+
+        // quantity
+        let q = parseInt(it.quantity, 10);
+        if (!isFinite(q) || q < 1) q = 1;
+        if (it.quantity !== q) { it.quantity = q; changed = true; }
+
+        // available weight options (optional from product page)
+        if (!Array.isArray(it.weights) || it.weights.length === 0) {
+          it.weights = DEFAULT_WEIGHT_OPTIONS;
+          changed = true;
+        } else {
+          it.weights = it.weights.map(normalizeWeightString);
+        }
+      });
+      if (changed) saveCart(cart);
+      return cart;
+    }
+
+    function itemSubtotal(it) {
+      return it.basePrice * weightMultiplier(it.weight) * it.quantity;
+    }
+
+    function render() {
+      const raw = getCart();
+      const cart = normalizeCart(raw);
+      cartItemsContainer.innerHTML = "";
+
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p class="empty-message">Cart is empty.</p>';
+        totalPriceEl.textContent = "₹0";
+        return;
+      }
+
+      let grand = 0;
+
+      cart.forEach((item, index) => {
+        const sub = itemSubtotal(item);
+        grand += sub;
+
+        const card = document.createElement("div");
+        card.className = "cart-card";
+
+        const img = document.createElement("img");
+        img.src = item.image || "img/placeholder.jpg";
+        img.alt = (item.displayNameMR || item.displayNameEN || "Product");
+        img.onerror = () => { img.src = "img/placeholder.jpg"; };
+
+        const details = document.createElement("div");
+        details.className = "item-details";
+
+        const title = document.createElement("h2");
+        title.className = "item-title";
+        // Marathi first; English next. Always shows Marathi if available.
+        title.innerHTML = `
+          ${item.displayNameMR ? `<span>${item.displayNameMR}</span>` : (item.displayNameEN || "उत्पादन")}
+          ${item.displayNameEN ? ` <span class="en">/ ${item.displayNameEN}</span>` : ""}
+        `;
+
+        // Weight row
+        const weightRow = document.createElement("div");
+        weightRow.className = "row";
+        weightRow.innerHTML = `<label>वजन / Weight:</label>`;
+        const sel = document.createElement("select");
+        (item.weights || DEFAULT_WEIGHT_OPTIONS).forEach(w => {
+          const opt = document.createElement("option");
+          opt.value = normalizeWeightString(w);
+          opt.textContent = opt.value.replace(".5","½");
+          if (opt.value === item.weight) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.addEventListener("change", (e) => {
+          const cart = getCart();
+          cart[index].weight = e.target.value;
+          saveCart(cart);
+          render();
+        });
+        weightRow.appendChild(sel);
+
+        // Quantity row
+        const qtyRow = document.createElement("div");
+        qtyRow.className = "row";
+        qtyRow.innerHTML = `<label>प्रमाण / Qty:</label>`;
+        const qtyWrap = document.createElement("div");
+        qtyWrap.className = "qty-wrap";
+
+        const minus = document.createElement("button");
+        minus.className = "qty-btn";
+        minus.type = "button";
+        minus.textContent = "–";
+        minus.addEventListener("click", () => changeQty(index, (item.quantity - 1)));
+
+        const qtyInput = document.createElement("input");
+        qtyInput.type = "number";
+        qtyInput.min = "1";
+        qtyInput.step = "1";
+        qtyInput.value = String(item.quantity);
+        qtyInput.addEventListener("change", (e) => {
+          changeQty(index, parseInt(e.target.value, 10));
+        });
+
+        const plus = document.createElement("button");
+        plus.className = "qty-btn";
+        plus.type = "button";
+        plus.textContent = "+";
+        plus.addEventListener("click", () => changeQty(index, (item.quantity + 1)));
+
+        qtyWrap.append(minus, qtyInput, plus);
+        qtyRow.appendChild(qtyWrap);
+
+        // Price lines
+        const unitLine = document.createElement("p");
+        const unitPrice = item.basePrice * weightMultiplier(item.weight);
+        unitLine.className = "price-line";
+        unitLine.textContent = `युनिट किंमत / Unit: ${money(unitPrice)} ( ${item.weight} )`;
+
+        const subLine = document.createElement("p");
+        subLine.className = "price-line";
+        subLine.textContent = `उपएकूण / Subtotal: ${money(sub)}`;
+
+        // Remove
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "remove-btn";
+        removeBtn.title = "Remove";
+        removeBtn.textContent = "✖";
+        removeBtn.addEventListener("click", () => removeItem(index));
+
+        details.append(title, weightRow, qtyRow, unitLine, subLine);
+        card.append(img, details, removeBtn);
+        cartItemsContainer.appendChild(card);
+      });
+
+      totalPriceEl.textContent = money(grand);
+    }
+
+    function changeQty(index, newQty) {
+      const cart = getCart();
+      let q = parseInt(newQty, 10);
+      if (!isFinite(q) || q < 1) q = 1;
+      cart[index].quantity = q;
+      saveCart(cart);
+      render();
+    }
+
+    function removeItem(index) {
+      const cart = getCart();
+      cart.splice(index, 1);
+      saveCart(cart);
+      render();
+    }
+
+    // Initial render
+  render();
+
+// Checkout button → open checkout.html
+document.getElementById("checkoutBtn").addEventListener("click", () => {
+  // Save total price to localStorage
+  localStorage.setItem("checkoutTotal", totalPriceEl.textContent);
+  window.location.href = "checkout.html";
+});
+
+  </script>
+    <footer>
+    FSSAI Lic. 21518312000746 | © 2025 लांजेकर मिठाई भंडार
   </footer>
 </body>
 </html>
