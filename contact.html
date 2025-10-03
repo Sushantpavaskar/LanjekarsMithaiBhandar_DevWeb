@@ -15,6 +15,44 @@
       color: #5d4037;
       margin-top: 2rem;
     }
+    .contact-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: space-between;
+    }
+    .contact-form, .contact-info {
+      flex: 1 1 45%;
+      padding: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      border-radius: 12px;
+      background-color: #fff;
+    }
+    .contact-form label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    .contact-form input, .contact-form textarea, .contact-form button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+    }
+    .contact-form button {
+      background-color: #f8c102;
+      border: none;
+      color: #5d4037;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .contact-form button:hover {
+      background-color: #e0b000;
+    }
   </style>
 </head>
 <body>
@@ -26,7 +64,7 @@
         <li><a href="products.html" class="nav-link">Products</a></li>
         <li><a href="about.html" class="nav-link">About</a></li>
         <li><a href="contact.html" class="nav-link active">Contact</a></li>
-         <li><a href="order.html" class="nav-link active">Order</a></li>
+        <li><a href="order.html" class="nav-link">Order</a></li>
       </ul>
     </div>
   </nav>
@@ -35,19 +73,31 @@
     <h1 class="page-title marathi-font">संपर्क करा / Contact Us</h1>
 
     <div class="contact-box">
-      <form class="contact-form">
+      <!-- Web3Forms Contact Form -->
+      <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+        <!-- Access Key -->
+        <input type="hidden" name="access_key" value="31e9a10f-e380-48ea-95c5-cad0fe5bcf8a">
+
+        <!-- Form Inputs -->
         <label for="name">Full Name</label>
-        <input type="text" id="name" placeholder="Enter your name" required />
+        <input type="text" id="name" name="name" placeholder="Enter your name" required>
 
         <label for="email">Email</label>
-        <input type="email" id="email" placeholder="Enter your email" required />
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
 
         <label for="message">Message</label>
-        <textarea id="message" rows="5" placeholder="Write your message" required></textarea>
+        <textarea id="message" name="message" rows="5" placeholder="Write your message" required></textarea>
+
+        <!-- Honeypot for Spam Protection -->
+        <input type="checkbox" name="botcheck" style="display:none">
+
+        <!-- Optional Redirect -->
+        <!-- <input type="hidden" name="redirect" value="https://mywebsite.com/thanks.html"> -->
 
         <button type="submit">Send Message</button>
       </form>
 
+      <!-- Store Info -->
       <div class="contact-info">
         <h2 class="info-title">Store Details</h2>
         <p><strong>Owner:</strong> Rohit Lanjekar</p>
@@ -57,7 +107,8 @@
       </div>
     </div>
 
-    <div class="map-container">
+    <!-- Google Map -->
+    <div class="map-container" style="margin-top:2rem;">
       <iframe
         src="https://www.google.com/maps?q=Lanjekar+Mithai+Bhandar,+MSEB+Rd,+Vishrambag,+Sangli,+Maharashtra+416415&output=embed"
         width="100%"
@@ -69,7 +120,8 @@
       ></iframe>
     </div>
   </main>
-    <footer>
+
+  <footer>
     FSSAI Lic. 21518312000746 | © 2025 लांजेकर मिठाई भंडार
   </footer>
 </body>
